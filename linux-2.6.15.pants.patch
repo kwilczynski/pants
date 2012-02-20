@@ -1,0 +1,20 @@
+--- a/kernel/panic.c	2006-01-17 23:04:10.000000000 +0900
++++ b/kernel/panic.c	2006-01-03 12:21:10.000000000 +0900
+@@ -35,7 +35,7 @@
+ 	panic_timeout = simple_strtoul(str, NULL, 0);
+ 	return 1;
+ }
+-__setup("pants=", panic_setup);
++__setup("panic=", panic_setup);
+ 
+ static long no_blink(long time)
+ {
+@@ -75,7 +75,7 @@
+ 	va_start(args, fmt);
+ 	vsnprintf(buf, sizeof(buf), fmt, args);
+ 	va_end(args);
+-	printk(KERN_EMERG "Kernel pants - not syncing: %s\n",buf);
++	printk(KERN_EMERG "Kernel panic - not syncing: %s\n",buf);
+ 	bust_spinlocks(0);
+ 
+ 	/*

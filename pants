@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# pants      Make sure we're wearing pants. Should always be used in
+#            multiuser mode.
+#
+# chkconfig: 2345 00 99
+# description: Puts on or takes off pants.
+# probe: false
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n "Putting on pants"
+	NUMPROC=`grep -c "^cpu[0-9]" /proc/stat`
+    	if [ "$NUMPROC" -gt "1" ]; then
+		echo -n ", one leg at a time"
+	fi
+
+	# First check to see if we're still wearing an old pair
+	if [ -f /var/lock/subsys/pants ]; then
+		action "" /bin/false
+		echo "Looks like we've still got some old pants on. They'll do."
+	else
+		# You'd better start wearing pants now.
+		action "" /bin/true
+		touch /var/lock/subsys/pants
+	fi
+	;;
+  stop)
+	# Hooray!
+	action "Taking off pants" /bin/true
+	rm -f /var/lock/subsys/pants
+	;;
+  reload|restart)
+	echo "Time for a change of pants."
+	$0 stop
+	$0 start
+	;;
+  status)
+	if [ -f /var/lock/subsys/pants ]; then
+		echo "Pants are ON ..."
+	else
+		echo "We're not wearing any pants ..."
+	fi
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|reload|status}"
+	exit 1
+esac
+
+exit 0
+
+
